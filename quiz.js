@@ -247,3 +247,84 @@ function reveal(scores){
 
   show('result');
 }
+
+/* ---------- Tilda iframe auto-height bridge ---------- */
+(function () {
+  var MESSAGE_TYPE = 'purposeQuizHeight';
+  var REQUEST_TYPE = 'purposeQuizRequestHeight';
+  var rafId = null;
+
+  function getDocumentHeight() {
+    var body = document.body;
+    var html = document.documentElement;
+
+    return Math.ceil(Math.max(
+      body ? body.scrollHeight : 0,
+      body ? body.offsetHeight : 0,
+      body ? body.clientHeight : 0,
+      html ? html.scrollHeight : 0,
+      html ? html.offsetHeight : 0,
+      html ? html.clientHeight : 0
+    ));
+  }
+
+  function sendHeight() {
+    if (window.parent === window) return;
+
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(function () {
+      window.parent.postMessage({
+        type: MESSAGE_TYPE,
+        height: getDocumentHeight()
+      }, '*');
+    });
+  }
+
+  function sendSeveralTimes() {
+    sendHeight();
+    setTimeout(sendHeight, 100);
+    setTimeout(sendHeight, 300);
+    setTimeout(sendHeight, 700);
+    setTimeout(sendHeight, 1400);
+    setTimeout(sendHeight, 2400);
+  }
+
+  window.addEventListener('load', sendSeveralTimes);
+  window.addEventListener('resize', sendSeveralTimes);
+  window.addEventListener('orientationchange', sendSeveralTimes);
+
+  window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === REQUEST_TYPE) {
+      sendSeveralTimes();
+    }
+  });
+
+  if ('ResizeObserver' in window) {
+    var resizeObserver = new ResizeObserver(sendHeight);
+    resizeObserver.observe(document.documentElement);
+    if (document.body) resizeObserver.observe(document.body);
+  }
+
+  if ('MutationObserver' in window && document.body) {
+    var mutationObserver = new MutationObserver(sendSeveralTimes);
+    mutationObserver.observe(document.body, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      characterData: true
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var images = document.images || [];
+    for (var i = 0; i < images.length; i++) {
+      images[i].addEventListener('load', sendSeveralTimes);
+      images[i].addEventListener('error', sendSeveralTimes);
+    }
+    sendSeveralTimes();
+  });
+
+  document.addEventListener('click', function () {
+    sendSeveralTimes();
+  }, true);
+})();
