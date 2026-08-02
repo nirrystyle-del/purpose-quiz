@@ -248,83 +248,69 @@ function reveal(scores){
   show('result');
 }
 
+
 /* ---------- Tilda iframe auto-height bridge ---------- */
 (function () {
-  var MESSAGE_TYPE = 'purposeQuizHeight';
-  var REQUEST_TYPE = 'purposeQuizRequestHeight';
-  var rafId = null;
+  var TYPE = 'purposeQuizHeight';
+  var lastHeight = 0;
+  var timer = null;
 
-  function getDocumentHeight() {
-    var body = document.body;
-    var html = document.documentElement;
+  function calculateHeight() {
+    var active = document.querySelector('.screen.active');
+    if (!active) return 850;
 
-    return Math.ceil(Math.max(
-      body ? body.scrollHeight : 0,
-      body ? body.offsetHeight : 0,
-      body ? body.clientHeight : 0,
-      html ? html.scrollHeight : 0,
-      html ? html.offsetHeight : 0,
-      html ? html.clientHeight : 0
-    ));
+    var inner = active.querySelector('.inner');
+    var contentHeight = inner ? Math.ceil(inner.getBoundingClientRect().height) : 0;
+
+    if (active.id !== 'result') {
+      return window.innerWidth <= 560 ? 720 : 850;
+    }
+
+    var topPadding = window.innerWidth <= 560 ? 52 : 64;
+    var bottomPadding = window.innerWidth <= 560 ? 72 : 90;
+    return Math.max(900, contentHeight + topPadding + bottomPadding + 12);
   }
 
   function sendHeight() {
     if (window.parent === window) return;
 
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(function () {
-      window.parent.postMessage({
-        type: MESSAGE_TYPE,
-        height: getDocumentHeight()
-      }, '*');
-    });
+    var height = calculateHeight();
+    if (Math.abs(height - lastHeight) < 3) return;
+    lastHeight = height;
+
+    window.parent.postMessage({
+      type: TYPE,
+      height: height
+    }, '*');
   }
 
-  function sendSeveralTimes() {
-    sendHeight();
-    setTimeout(sendHeight, 100);
-    setTimeout(sendHeight, 300);
+  function scheduleHeight() {
+    clearTimeout(timer);
+    timer = setTimeout(sendHeight, 60);
+    setTimeout(sendHeight, 250);
     setTimeout(sendHeight, 700);
-    setTimeout(sendHeight, 1400);
-    setTimeout(sendHeight, 2400);
   }
 
-  window.addEventListener('load', sendSeveralTimes);
-  window.addEventListener('resize', sendSeveralTimes);
-  window.addEventListener('orientationchange', sendSeveralTimes);
+  window.addEventListener('load', scheduleHeight);
+  window.addEventListener('resize', scheduleHeight);
+  window.addEventListener('orientationchange', scheduleHeight);
+  document.addEventListener('click', scheduleHeight, true);
 
-  window.addEventListener('message', function (event) {
-    if (event.data && event.data.type === REQUEST_TYPE) {
-      sendSeveralTimes();
+  document.addEventListener('DOMContentLoaded', function () {
+    var images = document.images || [];
+    for (var i = 0; i < images.length; i++) {
+      images[i].addEventListener('load', scheduleHeight);
+      images[i].addEventListener('error', scheduleHeight);
     }
+    scheduleHeight();
   });
 
-  if ('ResizeObserver' in window) {
-    var resizeObserver = new ResizeObserver(sendHeight);
-    resizeObserver.observe(document.documentElement);
-    if (document.body) resizeObserver.observe(document.body);
-  }
-
   if ('MutationObserver' in window && document.body) {
-    var mutationObserver = new MutationObserver(sendSeveralTimes);
-    mutationObserver.observe(document.body, {
+    new MutationObserver(scheduleHeight).observe(document.body, {
       subtree: true,
       childList: true,
       attributes: true,
       characterData: true
     });
   }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    var images = document.images || [];
-    for (var i = 0; i < images.length; i++) {
-      images[i].addEventListener('load', sendSeveralTimes);
-      images[i].addEventListener('error', sendSeveralTimes);
-    }
-    sendSeveralTimes();
-  });
-
-  document.addEventListener('click', function () {
-    sendSeveralTimes();
-  }, true);
 })();
