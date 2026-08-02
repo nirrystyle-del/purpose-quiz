@@ -1,5 +1,5 @@
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
+#purpose-quiz,#purpose-quiz *,#purpose-quiz *::before,#purpose-quiz *::after{box-sizing:border-box;margin:0;padding:0}
+#purpose-quiz{
 --cream:#FFF9F3;
 --pink-mist:#FBE6EE;
 --pink:#F3BFD2;
@@ -15,8 +15,7 @@
 --ink-soft:#8A6A83;
 --white:#FFFDFB;
 }
-html{scroll-behavior:smooth}
-body{
+#purpose-quiz{
 min-height:100vh;
 font-family:'EB Garamond',Georgia,serif;
 font-size:18px;
@@ -29,7 +28,7 @@ overflow-x:hidden;
 position:relative;
 }
 /* ---------- ambient magic layers ---------- */
-.aura{position:fixed;inset:0;pointer-events:none;z-index:0}
+.aura{position:absolute;inset:0;pointer-events:none;z-index:0}
 .aura span{
 position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;
 animation:drift 22s ease-in-out infinite alternate;
@@ -50,7 +49,7 @@ span:nth-child(4){width:300px;height:300px;top:60%;left:-60px;background:radial-
 from{transform:translate3d(0,0,0) scale(1)}
 to{transform:translate3d(40px,-50px,0) scale(1.18)}
 }
-.sparkles{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.sparkles{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden}
 .sp{
 position:absolute;width:5px;height:5px;border-radius:50%;
 background:radial-gradient(circle,#fff 0%,var(--gold-light)
@@ -66,7 +65,7 @@ animation:float linear infinite;opacity:0;
 85%{opacity:.6}
 100%{transform:translateY(-105vh) scale(1.1);opacity:0}
 }
-.butterfly{position:fixed;z-index:1;pointer-events:none;opacity:.5;animation:flutter
+.butterfly{position:absolute;z-index:1;pointer-events:none;opacity:.5;animation:flutter
 30s ease-in-out infinite}
 .butterfly svg{display:block;filter:drop-shadow(0 0 8px
 rgba(217,174,99,.55))}
@@ -87,7 +86,7 @@ rgba(217,174,99,.55))}
 }
 /* ---------- progress ---------- */
 .progress-track{
-position:fixed;top:0;left:0;right:0;height:4px;z-index:50;
+position:absolute;top:0;left:0;right:0;height:4px;z-index:50;
 background:rgba(217,174,99,.14);
 }
 .progress-fill{
@@ -375,7 +374,7 @@ color:var(--ink-soft);transition:all .25s;
 .restart:hover{border-color:var(--rose);color:var(--rose-deep);background:rgba(255,255,255,.5)}
 /* ---------- responsive ---------- */
 @media(max-width:560px){
-body{font-size:17px}
+#purpose-quiz{font-size:17px}
 .screen{padding:52px 15px 70px}
 .card{padding:32px 22px;border-radius:24px}
 .opt{font-size:16.5px;padding:16px 18px 16px 44px;border-radius:17px}
@@ -387,3 +386,5 @@ body{font-size:17px}
 @media(prefers-reduced-motion:reduce){
 *{animation:none!important;transition-duration:.01s!important}
 }
+
+#purpose-quiz{position:relative;overflow:hidden;width:100%;font-family:'EB Garamond',Georgia,serif;}
