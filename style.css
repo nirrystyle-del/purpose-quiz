@@ -18,25 +18,34 @@
 }
 
 html{
+  width:100%;
+  min-height:100%;
+  height:auto;
   scroll-behavior:smooth;
   -webkit-text-size-adjust:100%;
   text-size-adjust:100%;
+  overflow-x:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
 
 body{
+  width:100%;
   min-height:100vh;
+  height:auto;
   font-family:'EB Garamond',Georgia,serif;
   font-size:18px;
   line-height:1.75;
   color:var(--ink);
   background:linear-gradient(165deg,#FFF7F4 0%,#FDEAF1 22%,#F7E3F3 48%,#EFE4FB 72%,#FFF3EA 100%);
-  background-attachment:fixed;
+  background-attachment:scroll;
   position:relative;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior-y:auto;
+  touch-action:pan-y;
+  -webkit-overflow-scrolling:touch;
   -webkit-font-smoothing:antialiased;
-  /* NOTE: no overflow on body. overflow-x here would turn body into a scroll
-     container (overflow-y computes to auto) and break vertical scrolling of the
-     long result inside iframes / mobile webviews. Horizontal overflow is instead
-     contained by clipping the fixed decorative layers below. */
 }
 
 /* kill mobile blue tap flash everywhere */
@@ -142,26 +151,53 @@ a,button,.opt{-webkit-tap-highlight-color:transparent}
 }
 
 /* ---------- layout ---------- */
-.screen{display:none;position:relative;z-index:5;min-height:100vh;padding:64px 20px 90px}
-/* top-align the flex column; vertical centering is done with auto margins below.
-   auto margins center the child ONLY when there is spare room, and collapse to 0
-   when the content is taller than the viewport, so nothing is ever clipped and the
-   page scrolls normally to the very bottom (fixes the unreachable result footer). */
-.screen.active{display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.screen{
+  display:none;
+  position:relative;
+  z-index:5;
+  width:100%;
+  min-height:100vh;
+  height:auto;
+  padding:64px 20px 90px;
+  overflow:visible;
+}
+.screen.active{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
 .inner{width:100%;max-width:640px}
-
-/* short screens (intro / question / loading) still appear vertically centered */
-.screen.active .inner{margin-top:auto;margin-bottom:auto}
-
-/* the long result must start at the top and flow downward as an ordinary document */
-#result.active .inner{margin-top:0;margin-bottom:0}
 
 @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 .screen.active .inner{animation:rise .55s cubic-bezier(.2,.7,.3,1) both}
 
-/* result: fade only, no transform, so height/scroll are always calculated correctly */
-@keyframes fadeOnly{from{opacity:0}to{opacity:1}}
-#result.active .inner{animation-name:fadeOnly}
+/* Long result must be a normal document block, not a viewport-sized flex screen */
+#result.active{
+  display:block !important;
+  min-height:0 !important;
+  height:auto !important;
+  overflow:visible !important;
+  padding-top:64px;
+}
+#result.active .inner{
+  display:block;
+  width:100%;
+  height:auto !important;
+  min-height:0 !important;
+  margin:0 auto;
+  overflow:visible !important;
+  animation:resultFade .35s ease both;
+}
+#result.active .card,
+#result.active .res-figure,
+#result.active .res-body,
+#result.active .cta{
+  height:auto !important;
+  max-height:none !important;
+  overflow:visible !important;
+}
+@keyframes resultFade{from{opacity:0}to{opacity:1}}
 
 /* ---------- airy card ---------- */
 .card{
@@ -386,4 +422,28 @@ a,button,.opt{-webkit-tap-highlight-color:transparent}
 
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition-duration:.01s!important}
+}
+
+
+/* ===== FINAL SAFETY OVERRIDES FOR LONG RESULT SCROLL ===== */
+html, body{
+  max-height:none !important;
+  overflow-y:auto !important;
+}
+body{
+  position:relative !important;
+}
+#result,
+#result.active{
+  max-height:none !important;
+  overflow:visible !important;
+  touch-action:pan-y !important;
+  -webkit-overflow-scrolling:touch;
+}
+#result.active{
+  position:relative !important;
+}
+#result.active .inner{
+  position:relative !important;
+  transform:none !important;
 }
