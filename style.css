@@ -31,16 +31,19 @@ body{
   color:var(--ink);
   background:linear-gradient(165deg,#FFF7F4 0%,#FDEAF1 22%,#F7E3F3 48%,#EFE4FB 72%,#FFF3EA 100%);
   background-attachment:fixed;
-  overflow-x:hidden;
   position:relative;
   -webkit-font-smoothing:antialiased;
+  /* NOTE: no overflow on body. overflow-x here would turn body into a scroll
+     container (overflow-y computes to auto) and break vertical scrolling of the
+     long result inside iframes / mobile webviews. Horizontal overflow is instead
+     contained by clipping the fixed decorative layers below. */
 }
 
 /* kill mobile blue tap flash everywhere */
 a,button,.opt{-webkit-tap-highlight-color:transparent}
 
 /* ---------- ambient light ---------- */
-.aura{position:fixed;inset:0;pointer-events:none;z-index:0}
+.aura{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .aura span{
   position:absolute;border-radius:50%;filter:blur(75px);opacity:.45;
   animation:drift 24s ease-in-out infinite alternate;
@@ -140,11 +143,25 @@ a,button,.opt{-webkit-tap-highlight-color:transparent}
 
 /* ---------- layout ---------- */
 .screen{display:none;position:relative;z-index:5;min-height:100vh;padding:64px 20px 90px}
-.screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
+/* top-align the flex column; vertical centering is done with auto margins below.
+   auto margins center the child ONLY when there is spare room, and collapse to 0
+   when the content is taller than the viewport, so nothing is ever clipped and the
+   page scrolls normally to the very bottom (fixes the unreachable result footer). */
+.screen.active{display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
 .inner{width:100%;max-width:640px}
+
+/* short screens (intro / question / loading) still appear vertically centered */
+.screen.active .inner{margin-top:auto;margin-bottom:auto}
+
+/* the long result must start at the top and flow downward as an ordinary document */
+#result.active .inner{margin-top:0;margin-bottom:0}
 
 @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 .screen.active .inner{animation:rise .55s cubic-bezier(.2,.7,.3,1) both}
+
+/* result: fade only, no transform, so height/scroll are always calculated correctly */
+@keyframes fadeOnly{from{opacity:0}to{opacity:1}}
+#result.active .inner{animation-name:fadeOnly}
 
 /* ---------- airy card ---------- */
 .card{
