@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test poslání</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=4">
+</head>
+<body>
+<div class="aura"><span></span><span></span><span></span><span></span></div>
+
+
+<div class="sparkles" id="sparkles"></div>
+
+
+<div class="butterfly b1">
+<svg fill="none" height="30" viewbox="0 0 34 30" width="34">
+<path d="M17 15C13 4 4 1 2 7c-2 6 6 10 15 8Z" fill="#F3BFD2" fill-opacity=".75"></path>
+<path d="M17 15C21 4 30 1 32 7c2 6-6 10-15 8Z" fill="#EADFF9" fill-opacity=".75"></path>
+<path d="M17 15c-4 10-11 13-13 8-2-5 5-9 13-8Z" fill="#FBDCC6" fill-opacity=".7"></path>
+<path d="M17 15c4 10 11 13 13 8 2-5-5-9-13-8Z" fill="#F3BFD2" fill-opacity=".7"></path>
+<ellipse cx="17" cy="15" fill="#D9AE63" rx="1.3" ry="6"></ellipse>
+</svg>
+</div>
+
+
+<div class="butterfly b2">
+<svg fill="none" height="23" viewbox="0 0 34 30" width="26">
+<path d="M17 15C13 4 4 1 2 7c-2 6 6 10 15 8Z" fill="#EADFF9" fill-opacity=".7"></path>
+<path d="M17 15C21 4 30 1 32 7c2 6-6 10-15 8Z" fill="#F3BFD2" fill-opacity=".7"></path>
+<path d="M17 15c-4 10-11 13-13 8-2-5 5-9 13-8Z" fill="#F3BFD2" fill-opacity=".65"></path>
+<path d="M17 15c4 10 11 13 13 8 2-5-5-9-13-8Z" fill="#FBDCC6" fill-opacity=".65"></path>
+<ellipse cx="17" cy="15" fill="#D9AE63" rx="1.3" ry="6"></ellipse>
+</svg>
+</div>
+
+
+<div class="butterfly b3">
+<svg fill="none" height="18" viewbox="0 0 34 30" width="20">
+<path d="M17 15C13 4 4 1 2 7c-2 6 6 10 15 8Z" fill="#FBDCC6" fill-opacity=".6"></path>
+<path d="M17 15C21 4 30 1 32 7c2 6-6 10-15 8Z" fill="#F3BFD2" fill-opacity=".6"></path>
+<ellipse cx="17" cy="15" fill="#D9AE63" rx="1.2" ry="5"></ellipse>
+</svg>
+</div>
+
+
+<div class="progress-track"><div class="progress-fill" id="bar"></div></div>
+
+
+
+
+
+<section class="screen active" id="intro">
+<div class="inner">
+<div class="card">
+<p class="brandmark">MATICEOSUDU.CZ</p>
+<p class="eyebrow">Test</p>
+<h1 class="intro-title">Proč stále nemůžete najít<br/><em>své skutečné
+poslání?</em></h1>
+<div class="divider"><i></i><b></b><i></i></div>
+<p class="intro-lead">Někdy nám nechybí odpověď.<br/>Chybí nám odvaha
+podívat se tam,<br/>kam se díváme nejméně rády.</p>
+<button class="btn" onclick="start()">Zahájit test</button>
+</div>
+</div>
+</section>
+
+
+
+
+
+<section class="screen" id="quiz">
+<div class="inner">
+<div class="card">
+<div class="q-head">
+<span class="q-num" id="qnum">01 / 10</span>
+<span class="q-rule"></span>
+</div>
+<p class="q-text" id="qtext"></p>
+<ul class="options" id="opts"></ul>
+<div class="q-nav">
+<button class="back" id="back" onclick="prev()">←  Předchozí
+otázka</button>
+</div>
+</div>
+</div>
+</section>
+
+
+
+
+
+<section class="screen" id="load">
+<div class="inner">
+<div class="orbit"><i></i><i></i></div>
+<p class="load-txt">Skládám vaše odpovědi dohromady</p>
+</div>
+</section>
+
+
+
+
+
+<section class="screen" id="result">
+<div class="inner">
+<figure class="res-figure"><img alt="" id="resimg" src=""/></figure>
+<div class="card">
+<p class="eyebrow">Váš výsledek</p>
+<h2 class="res-title" id="restitle"></h2>
+<div class="divider"><i></i><b></b><i></i></div>
+<div class="res-body" id="resbody"></div>
+<div class="also" id="also" style="display:none"></div>
+<div class="hint">
+<p class="hint-label">Vaše nápověda</p>
+<p id="reshint"></p>
+</div>
+<div class="cta">
+<div class="cta-main">
+<span class="cta-badge">
+<svg fill="none" height="15" viewbox="0 0 24 24" width="15"><path d="M21
+11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0
+1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38
+8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Teď to nejdůležitější</span>
+</span>
+<p class="cta-lead">Vraťte se do naší konverzace na Instagramu a
+odpovězte mi ještě na pár otázek.</p>
+<p class="cta-note">Podle nich vám pak dokážu odpovědět osobně.</p>
+</div>
+<div class="cta-or"><i></i><span>nebo rovnou</span><i></i></div>
+<div class="btn-row">
+<a class="btn" href="https://www.maticeosudu.cz/rozbor">Objednat
+kompletní rozbor</a>
+<a class="btn-ghost" href="https://www.maticeosudu.cz/">Spočítat celou
+matici osudu</a>
+</div>
+<p class="cta-sub">Vaše datum narození ukáže zbytek příběhu</p>
+</div>
+<button class="restart" onclick="start()">Projít test znovu</button>
+</div>
+</div>
+</section>
+<script src="quiz.js?v=4"></script>
+<script>
+(function(){
+  function sendHeight(){
+    var h = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, window.innerHeight);
+    parent.postMessage({type:'purposeQuizHeight', height:h}, '*');
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  document.addEventListener('click', function(){ setTimeout(sendHeight, 50); setTimeout(sendHeight, 600); setTimeout(sendHeight, 2300); });
+  if ('ResizeObserver' in window) new ResizeObserver(sendHeight).observe(document.body);
+  setInterval(sendHeight, 1500);
+})();
+</script>
+</body>
+</html>
